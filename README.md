@@ -1,14 +1,18 @@
 # Async Task Dashboard ⚡️📊
 
-A Full Stack solution demonstrating how to elegantly handle long-running, resource-intensive background tasks (like complex simulations or heavy data processing) without blocking the user interface.
+Proyecto Full Stack diseñado como **escaparate para LinkedIn** para demostrar arquitectura asíncrona real con UX robusta:
+- Frontend: Next.js 14 + TypeScript + Tailwind
+- API: FastAPI
+- Worker: Celery
+- Broker/Result Backend: Redis
 
-## The Problem
-Standard HTTP requests time out or provide terrible UX when a backend process takes more than a few seconds. Users are left looking at a frozen loading spinner, unsure if the system crashed.
+## Qué demuestra este proyecto
+- Cómo evitar bloquear la UI con tareas largas.
+- Diseño API correcto para asincronía (`202 Accepted` al crear tarea).
+- Polling resiliente con tipado estricto y gestión de estados completos.
+- Separación limpia entre transporte (FastAPI) y ejecución (Celery).
 
-## The Solution
-An asynchronous architecture where the backend instantly acknowledges the request and offloads the work to a distributed task queue. The frontend gracefully polls (or uses WebSockets) to update the UI in real-time as the task progresses through its lifecycle (Pending -> Processing -> Completed/Failed).
-
-## Architecture
+## Arquitectura
 
 ```mermaid
 sequenceDiagram
@@ -17,37 +21,43 @@ sequenceDiagram
     participant Q as Redis Queue
     participant W as Celery Worker
 
-    U->>API: POST /api/tasks (Start Simulation)
+    U->>API: POST /api/tasks
     API->>Q: Enqueue Task
-    API-->>U: HTTP 202 Accepted (Task ID)
-    
+    API-->>U: 202 Accepted (task_id)
+
     Q->>W: Assign Task
-    W-->>Q: Update Status (Processing: 50%)
-    
+    W-->>Q: Update Status (PROCESSING + progress)
+
     U->>API: GET /api/tasks/{id}/status
-    API->>Q: Fetch current status
-    API-->>U: HTTP 200 (Status: Processing: 50%)
-    
-    W-->>Q: Task Complete (Result)
-    U->>API: GET /api/tasks/{id}/status
-    API-->>U: HTTP 200 (Status: Completed, Result Data)
+    API-->>U: 200 (PENDING/PROCESSING/COMPLETED/FAILED)
 ```
 
-## Key Technologies & Design Principles
-- **Frontend (Next.js 14 & TypeScript):** 
-  - Custom React Hooks to encapsulate polling logic, adhering to the **Single Responsibility Principle (SRP)**.
-  - Tailwind CSS for modular, utility-first styling.
-- **Backend (Python FastAPI):** 
-  - Lightweight, non-blocking routing. 
-  - **Interface Segregation:** API endpoints only know how to enqueue tasks and read statuses, completely decoupled from the actual processing logic.
-- **Workers (Celery & Redis):** Robust task execution with idempotency and retry mechanisms built-in.
+## Estados gestionados
+- `PENDING`
+- `PROCESSING`
+- `COMPLETED`
+- `FAILED`
+- Timeout de red en frontend (AbortController)
 
-## Local Setup
-\`\`\`bash
-# 1. Clone the repository
-git clone https://github.com/yourusername/async-task-dashboard.git
-cd async-task-dashboard
+## Endpoints
+- `POST /api/tasks`
+  - Crea tarea asíncrona
+  - Respuesta: `202 Accepted`
+- `GET /api/tasks/{task_id}/status`
+  - Devuelve estado y progreso
+  - Respuesta: `404 Not Found` si el `task_id` no existe
 
-# 2. Start the Full Stack environment via Docker Compose
-docker-compose up --build
-\`\`\`
+## Ejecutar en local
+```bash
+docker compose up --build
+```
+
+Servicios:
+- Frontend: `http://localhost:3000`
+- Backend (Swagger): `http://localhost:8000/docs`
+- Redis: `localhost:6379`
+
+## Ideas para destacar más en LinkedIn
+- Añadir botón para simular fallo controlado del worker.
+- Añadir métricas de duración por tarea.
+- Añadir modo WebSocket/SSE para comparar con polling.
