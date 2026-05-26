@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import redis
 from celery.result import AsyncResult
@@ -37,7 +38,7 @@ class TaskStatusResponse(BaseModel):
     task_id: str
     status: str
     progress: int
-    result: str | None
+    result: dict[str, Any] | None
     error: str | None
 
 
@@ -56,23 +57,11 @@ async def get_task_status(task_id: str) -> TaskStatusResponse:
     async_result = AsyncResult(task_id, app=celery_app)
 
     if async_result.state == "PENDING":
-        return TaskStatusResponse(
-            task_id=task_id,
-            status="PENDING",
-            progress=0,
-            result=None,
-            error=None,
-        )
+        return TaskStatusResponse(task_id=task_id, status="PENDING", progress=0, result=None, error=None)
 
     if async_result.state == "PROCESSING":
         metadata = async_result.info or {}
-        return TaskStatusResponse(
-            task_id=task_id,
-            status="PROCESSING",
-            progress=metadata.get("progress", 0),
-            result=None,
-            error=None,
-        )
+        return TaskStatusResponse(task_id=task_id, status="PROCESSING", progress=metadata.get("progress", 0), result=None, error=None)
 
     if async_result.state == "SUCCESS":
         payload = async_result.result or {}
@@ -91,12 +80,6 @@ async def get_task_status(task_id: str) -> TaskStatusResponse:
         if error_text is None and async_result.info is not None:
             error_text = str(async_result.info)
 
-        return TaskStatusResponse(
-            task_id=task_id,
-            status="FAILED",
-            progress=0,
-            result=None,
-            error=error_text or "Task failed",
-        )
+        return TaskStatusResponse(task_id=task_id, status="FAILED", progress=0, result=None, error=error_text or "Task failed")
 
     raise HTTPException(status_code=500, detail="Unexpected task state")
