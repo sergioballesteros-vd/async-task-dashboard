@@ -1,18 +1,18 @@
 # Async Task Dashboard ⚡️📊
 
-Proyecto Full Stack diseñado como **escaparate para LinkedIn** para demostrar arquitectura asíncrona real con UX robusta:
-- Frontend: Next.js 14 + TypeScript + Tailwind
-- API: FastAPI
-- Worker: Celery
-- Broker/Result Backend: Redis
+A Full Stack project designed as a **portfolio showcase** to demonstrate real-world asynchronous architecture with robust UX:
+- **Frontend:** Next.js 14 + TypeScript + Tailwind
+- **API:** FastAPI
+- **Worker:** Celery
+- **Broker/Result Backend:** Redis
 
-## Qué demuestra este proyecto
-- Cómo evitar bloquear la UI con tareas largas.
-- Diseño API correcto para asincronía (`202 Accepted` al crear tarea).
-- Polling resiliente con tipado estricto y gestión de estados completos.
-- Separación limpia entre transporte (FastAPI) y ejecución (Celery).
+## Key Concepts Demonstrated
+- How to prevent blocking the UI during long-running tasks.
+- Proper API design for asynchronous operations (`202 Accepted` on task creation).
+- Resilient polling mechanism with strict typing and comprehensive state management.
+- Clean separation of concerns between transport (FastAPI) and execution (Celery).
 
-## Arquitectura
+## Architecture
 
 ```mermaid
 sequenceDiagram
@@ -32,20 +32,20 @@ sequenceDiagram
     API-->>U: 200 (PENDING/PROCESSING/COMPLETED/FAILED)
 ```
 
-## Estados gestionados
+## Managed States
 - `PENDING`
 - `PROCESSING`
 - `COMPLETED`
 - `FAILED`
-- Timeout de red en frontend (AbortController)
+- Network timeouts on the frontend (handled via AbortController)
 
 ## Endpoints
 - `POST /api/tasks`
-  - Crea tarea asíncrona
-  - Respuesta: `202 Accepted`
+  - Creates an asynchronous task.
+  - Response: `202 Accepted`
 - `GET /api/tasks/{task_id}/status`
-  - Devuelve estado y progreso
-  - Respuesta: `404 Not Found` si el `task_id` no existe
+  - Returns the current status and progress of the task.
+  - Response: `404 Not Found` if the `task_id` does not exist.
 
 ## Local Setup
 \`\`\`bash
@@ -59,7 +59,7 @@ docker-compose up --build
 
 Wait for the services to build and start. The frontend will be available at `http://localhost:3000` and the API at `http://localhost:8000/docs`.
 
-## Ideas para destacar más en LinkedIn
-- Añadir botón para simular fallo controlado del worker.
-- Añadir métricas de duración por tarea.
-- Añadir modo WebSocket/SSE para comparar con polling.
+## Future Enhancements
+- Add a button to simulate a controlled worker failure.
+- Add duration metrics per task.
+- Implement WebSocket/SSE support to compare against the polling strategy.
