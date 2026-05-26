@@ -47,15 +47,17 @@ sequenceDiagram
   - Devuelve estado y progreso
   - Respuesta: `404 Not Found` si el `task_id` no existe
 
-## Ejecutar en local
-```bash
-docker compose up --build
-```
+## Local Setup
+\`\`\`bash
+# 1. Clone the repository
+git clone https://github.com/yourusername/async-task-dashboard.git
+cd async-task-dashboard
 
-Servicios:
-- Frontend: `http://localhost:3000`
-- Backend (Swagger): `http://localhost:8000/docs`
-- Redis: `localhost:6379`
+# 2. Start the Full Stack environment via Docker Compose
+docker-compose up --build
+\`\`\`
+
+Wait for the services to build and start. The frontend will be available at `http://localhost:3000` and the API at `http://localhost:8000/docs`.
 
 ## Ideas para destacar más en LinkedIn
 - Añadir botón para simular fallo controlado del worker.

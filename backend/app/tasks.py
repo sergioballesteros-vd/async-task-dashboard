@@ -25,7 +25,19 @@ def run_heavy_simulation(self):
 
         return {
             "progress": 100,
-            "result": "Simulation completed successfully with deterministic report.",
+            "result": {
+                "status": "COMPLETED",
+                "analysis_report": {
+                    "total_savings_eur": 450.50,
+                    "recommended_tariff": "Indexada",
+                    "confidence_score": 98.5,
+                    "simulated_scenarios": 3,
+                    "insights": [
+                        "High consumption detected during peak hours.",
+                        "Switching to 'Indexada' could reduce costs by 15%."
+                    ]
+                }
+            },
             "error": None,
         }
     except Exception as execution_error:
