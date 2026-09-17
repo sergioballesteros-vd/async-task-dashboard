@@ -1,6 +1,8 @@
 # Async Task Dashboard ⚡️📊
 
-A Full Stack project designed as a **portfolio showcase** to demonstrate real-world asynchronous architecture with robust UX:
+> **Learning / demo project.** The async plumbing (FastAPI → Redis queue → Celery worker → polling) is real and runnable. The "business calculation" inside the worker (`run_heavy_simulation`) is a simulated placeholder that sleeps and returns a fixed sample result — it does not compute anything real. Treat this repo as a demonstration of the async task pattern, not of the analysis itself.
+
+A Full Stack project built to demonstrate asynchronous architecture with robust UX:
 - **Frontend:** Next.js 14 + TypeScript + Tailwind
 - **API:** FastAPI
 - **Worker:** Celery
@@ -50,7 +52,7 @@ sequenceDiagram
 ## Local Setup
 \`\`\`bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/async-task-dashboard.git
+git clone https://github.com/sergioballesteros-vd/async-task-dashboard.git
 cd async-task-dashboard
 
 # 2. Start the Full Stack environment via Docker Compose
